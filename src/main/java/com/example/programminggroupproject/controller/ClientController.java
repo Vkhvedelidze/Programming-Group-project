@@ -5,12 +5,12 @@ import com.example.programminggroupproject.session.Session;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientController {
 
@@ -21,7 +21,28 @@ public class ClientController {
     private ComboBox<String> shopComboBox;
 
     @FXML
-    private TextArea descriptionArea;
+    private CheckBox engineIssueCheck;
+
+    @FXML
+    private CheckBox brakeIssueCheck;
+
+    @FXML
+    private CheckBox tireIssueCheck;
+
+    @FXML
+    private CheckBox batteryIssueCheck;
+
+    @FXML
+    private CheckBox noiseIssueCheck;
+
+    @FXML
+    private CheckBox fluidLeakIssueCheck;
+
+    @FXML
+    private CheckBox otherIssueCheck;
+
+    @FXML
+    private TextArea notesArea;
 
     @FXML
     private Label messageLabel;
@@ -48,25 +69,64 @@ public class ClientController {
     private void handleSubmit() {
         String vehicle = vehicleComboBox.getValue();
         String shop = shopComboBox.getValue();
-        String description = descriptionArea.getText().trim();
 
-        if (vehicle == null || shop == null || description.isEmpty()) {
+        List<String> issues = new ArrayList<>();
+        if (engineIssueCheck.isSelected()) {
+            issues.add("Engine / performance");
+        }
+        if (brakeIssueCheck.isSelected()) {
+            issues.add("Brakes");
+        }
+        if (tireIssueCheck.isSelected()) {
+            issues.add("Tires / alignment");
+        }
+        if (batteryIssueCheck.isSelected()) {
+            issues.add("Battery / electrical");
+        }
+        if (noiseIssueCheck.isSelected()) {
+            issues.add("Unusual noises");
+        }
+        if (fluidLeakIssueCheck.isSelected()) {
+            issues.add("Fluid leak");
+        }
+        if (otherIssueCheck.isSelected()) {
+            issues.add("Other / not sure");
+        }
+
+        String notes = notesArea.getText().trim();
+
+        // Validation
+        if (vehicle == null || shop == null) {
             messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("Please fill in all fields before submitting.");
+            messageLabel.setText("Please select a vehicle and a mechanic shop.");
             return;
         }
 
-        // For now just log to console – later this will go to Supabase / DB
-        System.out.println("New service request:");
+        if (issues.isEmpty()) {
+            messageLabel.setStyle("-fx-text-fill: red;");
+            messageLabel.setText("Please select at least one issue.");
+            return;
+        }
+
+        // For now just log to console – later this becomes a DB record
+        System.out.println("=== New service request ===");
         System.out.println("Vehicle: " + vehicle);
         System.out.println("Shop: " + shop);
-        System.out.println("Description: " + description);
+        System.out.println("Issues: " + String.join(", ", issues));
+        System.out.println("Notes: " + (notes.isEmpty() ? "(none)" : notes));
 
         messageLabel.setStyle("-fx-text-fill: #28a745;");
-        messageLabel.setText("Service request submitted (dummy)!");
+        messageLabel.setText("Service request submitted (dummy) with structured issues!");
 
-        // Optionally clear fields
-        descriptionArea.clear();
+        // Optional: reset checkboxes and notes
+        engineIssueCheck.setSelected(false);
+        brakeIssueCheck.setSelected(false);
+        tireIssueCheck.setSelected(false);
+        batteryIssueCheck.setSelected(false);
+        noiseIssueCheck.setSelected(false);
+        fluidLeakIssueCheck.setSelected(false);
+        otherIssueCheck.setSelected(false);
+        notesArea.clear();
     }
 
     @FXML
