@@ -75,7 +75,20 @@ public class DashboardController {
     }
 
     @FXML
-    private void handleClientAction() { /* same as earlier */ }
+    private void handleClientAction() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/programminggroupproject/client-view.fxml")
+            );
+            Scene scene = new Scene(loader.load(), 800, 600);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Client — Request Service");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     private void handleMechanicAction() { /* same as earlier */ }
