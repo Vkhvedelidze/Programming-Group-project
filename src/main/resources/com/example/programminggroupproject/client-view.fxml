@@ -35,9 +35,37 @@
             </font>
         </Label>
 
-        <Label fx:id="debugLabel"
-               text="Client request screen WIP – here you will choose vehicle, shop, and services."
+        <Label text="Fill in the details below to request a service for your vehicle."
                style="-fx-text-fill: #666;"/>
+
+        <VBox spacing="10" maxWidth="400">
+
+            <Label text="Select Vehicle"/>
+            <ComboBox fx:id="vehicleComboBox"
+                      promptText="Choose vehicle"/>
+
+            <Label text="Select Mechanic Shop"/>
+            <ComboBox fx:id="shopComboBox"
+                      promptText="Choose mechanic shop"/>
+
+            <Label text="Describe the issue"/>
+            <TextArea fx:id="descriptionArea"
+                      promptText="Describe what’s wrong with your car..."
+                      prefRowCount="4"/>
+
+            <Button text="Submit Request"
+                    onAction="#handleSubmit"
+                    style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-padding: 8 16;"/>
+
+            <Label fx:id="messageLabel"
+                   text=""
+                   style="-fx-text-fill: #28a745;"/>
+
+            <!-- we keep debugLabel so ClientController can use it for handleBack() -->
+            <Label fx:id="debugLabel"
+                   text="Client request screen"
+                   style="-fx-text-fill: #999; -fx-font-size: 11;"/>
+        </VBox>
     </VBox>
 
 </VBox>
