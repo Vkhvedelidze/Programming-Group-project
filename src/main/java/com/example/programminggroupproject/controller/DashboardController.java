@@ -63,7 +63,16 @@ public class DashboardController {
 
     @FXML
     private void handleClientAction() {
-        System.out.println("Client action triggered");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/programminggroupproject/client-view.fxml"));
+            Scene scene = new Scene(loader.load(), 800, 600);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Client — Request Service");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

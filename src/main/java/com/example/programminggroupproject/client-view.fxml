@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.programminggroupproject.controller.ClientController">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <Label text="Client — Request Service" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+    <Label fx:id="infoLabel" text="Here the client will request a car service." />
+
+    <Button text="Back to Dashboard" onAction="#handleBack"/>
+</VBox>
