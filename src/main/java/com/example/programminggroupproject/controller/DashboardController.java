@@ -1,6 +1,7 @@
 package com.example.programminggroupproject.controller;
 
 import com.example.programminggroupproject.model.User;
+import com.example.programminggroupproject.session.Session;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -50,7 +51,28 @@ public class DashboardController {
     }
 
     @FXML
-    private void handleLogout() { /* same as earlier */ }
+    private void handleLogout() {
+        // Clear current user
+        Session.clear();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/programminggroupproject/login-view.fxml")
+            );
+            Scene loginScene = new Scene(loader.load(), 800, 600);
+
+            String css = getClass()
+                    .getResource("/com/example/programminggroupproject/styles.css")
+                    .toExternalForm();
+            loginScene.getStylesheets().add(css);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(loginScene);
+            stage.setTitle("Login - Car Servicinator 3000");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     private void handleClientAction() { /* same as earlier */ }
