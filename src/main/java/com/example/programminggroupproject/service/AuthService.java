@@ -1,22 +1,25 @@
 package com.example.programminggroupproject.service;
 
 import com.example.programminggroupproject.model.User;
+import java.util.Optional;
 
 public class AuthService {
 
     public static User authenticate(String username, String password) {
+        Optional<User> user = DataService.getInstance().authenticate(username, password);
+        return user.orElse(null);
+    }
 
-        // Hardcoded test users for now
-        if (username.equals("client") && password.equals("client123")) {
-            return new User("client", "client", "Client User", "client@example.com");
-        }
-        if (username.equals("mechanic") && password.equals("mechanic123")) {
-            return new User("mechanic", "mechanic", "Mechanic User", "mechanic@example.com");
-        }
-        if (username.equals("admin") && password.equals("admin123")) {
-            return new User("admin", "admin", "Admin User", "admin@example.com");
+    public static boolean register(String username, String password, String fullName, String role) {
+        // Basic validation
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            return false;
         }
 
-        return null; // invalid login
+        // Default email for now
+        String email = username + "@example.com";
+
+        User newUser = new User(username, password, role, fullName, email);
+        return DataService.getInstance().registerUser(newUser);
     }
 }
