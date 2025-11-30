@@ -20,6 +20,9 @@ public class DashboardController {
     private Button clientButton;
 
     @FXML
+    private Button clientRequestsButton;
+
+    @FXML
     private Button mechanicButton;
 
     @FXML
@@ -33,12 +36,14 @@ public class DashboardController {
         if (user != null) {
             welcomeLabel.setText("Welcome, " + user.getFullName() + " (" + user.getRole() + ")");
             clientButton.setVisible(false);
+            clientRequestsButton.setVisible(false);
             mechanicButton.setVisible(false);
             adminButton.setVisible(false);
 
             switch (user.getRole()) {
                 case "client":
                     clientButton.setVisible(true);
+                    clientRequestsButton.setVisible(true);
                     break;
                 case "mechanic":
                     mechanicButton.setVisible(true);
@@ -57,8 +62,7 @@ public class DashboardController {
 
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/programminggroupproject/login-view.fxml")
-            );
+                    getClass().getResource("/com/example/programminggroupproject/login-view.fxml"));
             Scene loginScene = new Scene(loader.load(), 800, 600);
 
             String css = getClass()
@@ -74,13 +78,11 @@ public class DashboardController {
         }
     }
 
-
     @FXML
     private void handleClientAction() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/programminggroupproject/client-view.fxml")
-            );
+                    getClass().getResource("/com/example/programminggroupproject/client-view.fxml"));
             Scene scene = new Scene(loader.load(), 800, 600);
 
             Stage stage = (Stage) welcomeLabel.getScene().getWindow();
@@ -92,8 +94,55 @@ public class DashboardController {
     }
 
     @FXML
-    private void handleMechanicAction() { /* same as earlier */ }
+    private void handleClientRequestsAction() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/programminggroupproject/client-requests-view.fxml"));
+            Scene scene = new Scene(loader.load(), 800, 600);
+
+            // Load CSS if available
+            try {
+                String css = getClass().getResource("/com/example/programminggroupproject/styles.css").toExternalForm();
+                scene.getStylesheets().add(css);
+            } catch (Exception e) {
+                // Ignore
+            }
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Client — My Requests");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
-    private void handleAdminAction() { /* same as earlier */ }
+    private void handleMechanicAction() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/programminggroupproject/mechanic-view.fxml"));
+            Scene scene = new Scene(loader.load(), 800, 600);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Mechanic Dashboard");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleAdminAction() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/programminggroupproject/admin-view.fxml"));
+            Scene scene = new Scene(loader.load(), 800, 600);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(scene);
+            stage.setTitle("Admin Dashboard - Analytics");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -35,14 +35,20 @@
             </font>
         </Label>
 
-    <VBox spacing="15" alignment="CENTER">
-        <!-- Client role button -->
+        <!-- Client role buttons -->
         <Button fx:id="clientButton"
                 text="Request Service"
                 prefWidth="250"
                 visible="false"
                 onAction="#handleClientAction"
                 style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12;"/>
+        
+        <Button fx:id="clientRequestsButton"
+                text="My Requests"
+                prefWidth="250"
+                visible="false"
+                onAction="#handleClientRequestsAction"
+                style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12;"/>
 
         <!-- Mechanic role button -->
         <Button fx:id="mechanicButton"
@@ -59,9 +65,9 @@
                 visible="false"
                 onAction="#handleAdminAction"
                 style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12;"/>
-    </VBox>
-
+        
         <Label text="(Features coming soon)" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
     </VBox>
 </VBox>
+
 
