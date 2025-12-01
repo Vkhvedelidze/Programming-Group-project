@@ -181,7 +181,7 @@ public class ClientController {
         request.setVehicleInfo(vehicle);
         request.setServiceDescription(String.join(", ", services));
         request.setStatus("Pending");
-        request.setCreatedAt(java.time.LocalDateTime.now());
+        request.setCreatedAt(java.time.OffsetDateTime.now());
 
         // Save to DataService
         com.example.programminggroupproject.service.DataService.getInstance().addServiceRequest(request);
