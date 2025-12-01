@@ -38,17 +38,18 @@ public class RegisterController {
     @FXML
     private void handleRegister() {
         String fullName = fullNameField.getText();
-        String username = usernameField.getText();
+        String email = usernameField.getText();  // Field name is username but we use it for email
         String password = passwordField.getText();
         String role = roleComboBox.getValue();
 
-        if (fullName.isEmpty() || username.isEmpty() || password.isEmpty() || role == null) {
+        if (fullName.isEmpty() || email.isEmpty() || password.isEmpty() || role == null) {
             messageLabel.setText("Please fill in all fields.");
             messageLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
-        boolean success = AuthService.register(username, password, fullName, role);
+        // TODO: In production, hash the password before storing
+        boolean success = AuthService.register(email, password, fullName, role);
 
         if (success) {
             messageLabel.setText("Registration successful! You can now login.");
@@ -58,7 +59,7 @@ public class RegisterController {
             usernameField.clear();
             passwordField.clear();
         } else {
-            messageLabel.setText("Username already exists.");
+            messageLabel.setText("Email already exists or registration failed.");
             messageLabel.setStyle("-fx-text-fill: red;");
         }
     }

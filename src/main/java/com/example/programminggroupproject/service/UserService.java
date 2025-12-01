@@ -5,10 +5,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service for managing User entities with Supabase backend.
  * Provides user-specific operations in addition to standard CRUD.
+ * Schema: id (UUID), email, password_hash, full_name, role, shop_id, created_at
  */
 public class UserService extends BaseSupabaseService<User> {
     
@@ -31,32 +33,23 @@ public class UserService extends BaseSupabaseService<User> {
     // ==================== USER-SPECIFIC OPERATIONS ====================
     
     /**
-     * Authenticate a user with username and password
-     * @param username The username
-     * @param password The password
+     * Authenticate a user with email and password
+     * @param email The user's email
+     * @param password The password (will be compared against password_hash)
      * @return Optional containing the User if authentication succeeds
      */
-    public Optional<User> authenticate(String username, String password) {
+    public Optional<User> authenticate(String email, String password) {
         try {
-            // Note: In production, you should use Supabase Auth API instead
-            // This is simplified for demonstration
-            List<User> users = filter("username", "eq", username);
+            // Note: In production, you should use Supabase Auth API and hash passwords
+            // This is simplified - assumes password is already hashed or for testing
+            List<User> users = filter("email", "eq", email);
             
             return users.stream()
-                    .filter(user -> user.getPassword().equals(password))
+                    .filter(user -> user.getPasswordHash().equals(password))
                     .findFirst();
         } catch (Exception e) {
             throw new RuntimeException("Authentication failed", e);
         }
-    }
-    
-    /**
-     * Find a user by username
-     * @param username The username to search for
-     * @return Optional containing the User if found
-     */
-    public Optional<User> findByUsername(String username) {
-        return findOneBy("username", username);
     }
     
     /**
@@ -78,12 +71,12 @@ public class UserService extends BaseSupabaseService<User> {
     }
     
     /**
-     * Check if a username already exists
-     * @param username The username to check
-     * @return true if username exists, false otherwise
+     * Get all users by shop ID
+     * @param shopId The shop ID to filter by
+     * @return List of users associated with the shop
      */
-    public boolean usernameExists(String username) {
-        return existsBy("username", username);
+    public List<User> getUsersByShopId(Long shopId) {
+        return findBy("shop_id", shopId);
     }
     
     /**
@@ -99,13 +92,9 @@ public class UserService extends BaseSupabaseService<User> {
      * Register a new user
      * @param user The user to register
      * @return The created user with generated ID
-     * @throws IllegalArgumentException if username or email already exists
+     * @throws IllegalArgumentException if email already exists
      */
     public User registerUser(User user) {
-        if (usernameExists(user.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
-        }
-        
         if (emailExists(user.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
@@ -119,6 +108,15 @@ public class UserService extends BaseSupabaseService<User> {
      * @return List of matching users
      */
     public List<User> searchUsers(String searchTerm) {
-        return searchMultiple(searchTerm, "full_name", "email", "username");
+        return searchMultiple(searchTerm, "full_name", "email");
+    }
+    
+    /**
+     * Get user by ID
+     * @param id The user ID (UUID)
+     * @return Optional containing the User if found
+     */
+    public Optional<User> getUserById(UUID id) {
+        return get(id);
     }
 }

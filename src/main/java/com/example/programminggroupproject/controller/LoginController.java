@@ -33,24 +33,24 @@ public class LoginController {
     private void handleLogin() {
         errorLabel.setText("");
 
-        String username = usernameField.getText();
+        String email = usernameField.getText();  // Field name is username but we use it for email
         String password = passwordField.getText();
 
-        if (username.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Please enter username and password");
+        if (email.isEmpty() || password.isEmpty()) {
+            errorLabel.setText("Please enter email and password");
             return;
         }
 
-        User user = AuthService.authenticate(username, password);
+        User user = AuthService.authenticate(email, password);
 
         if (user != null) {
             Session.setCurrentUser(user);
             navigateToDashboard(user);
         } else {
-            errorLabel.setText("Invalid username or password");
+            errorLabel.setText("Invalid email or password");
         }
 
-        System.out.println("Entered username: [" + username + "]");
+        System.out.println("Entered email: [" + email + "]");
         System.out.println("Entered password: [" + password + "]");
     }
 

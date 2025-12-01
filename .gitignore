@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Supabase Credentials ###
+src/main/resources/supabase.properties
