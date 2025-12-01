@@ -1,30 +1,71 @@
 package com.example.programminggroupproject.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
+/**
+ * ServiceRequest model matching the Supabase service_requests table schema.
+ * Schema: id (UUID), client_id, vehicle_id, shop_id, mechanic_id, status,
+ *         total_price_estimated, total_price_final, created_at
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServiceRequest {
 
-    private Long id;
-    private Long clientId;
-    private Long vehicleId;
-    private Long shopId;
-    private Long mechanicId;
+    @JsonProperty("id")
+    private UUID id;
+    
+    @JsonProperty("client_id")
+    private UUID clientId;
+    
+    @JsonProperty("vehicle_id")
+    private UUID vehicleId;
+    
+    @JsonProperty("shop_id")
+    private UUID shopId;
+    
+    @JsonProperty("mechanic_id")
+    private UUID mechanicId;
+    
+    @JsonProperty("status")
     private String status;
+    
+    @JsonProperty("total_price_estimated")
     private BigDecimal totalPriceEstimated;
+    
+    @JsonProperty("total_price_final")
     private BigDecimal totalPriceFinal;
-    private LocalDateTime createdAt;
+    
+    @JsonProperty("created_at")
+    private OffsetDateTime createdAt;
 
+    // Additional helper fields (not in database, for display purposes)
+    private String clientName;
+    private String vehicleInfo;
+    private String serviceDescription;
+
+    // Default constructor for Jackson
     public ServiceRequest() {
     }
 
-    public ServiceRequest(Long id, Long clientId, Long vehicleId, Long shopId, Long mechanicId,
-            String status, BigDecimal totalPriceEstimated, BigDecimal totalPriceFinal,
-            LocalDateTime createdAt) {
+    // Constructor for creating new service requests (without ID and created_at)
+    public ServiceRequest(UUID clientId, UUID vehicleId, UUID shopId, UUID mechanicId, String status,
+                          BigDecimal totalPriceEstimated, BigDecimal totalPriceFinal) {
+        this.clientId = clientId;
+        this.vehicleId = vehicleId;
+        this.shopId = shopId;
+        this.mechanicId = mechanicId;
+        this.status = status;
+        this.totalPriceEstimated = totalPriceEstimated;
+        this.totalPriceFinal = totalPriceFinal;
+    }
+
+    // Full constructor
+    public ServiceRequest(UUID id, UUID clientId, UUID vehicleId, UUID shopId, UUID mechanicId,
+                          String status, BigDecimal totalPriceEstimated, BigDecimal totalPriceFinal,
+                          OffsetDateTime createdAt) {
         this.id = id;
         this.clientId = clientId;
         this.vehicleId = vehicleId;
@@ -36,43 +77,44 @@ public class ServiceRequest {
         this.createdAt = createdAt;
     }
 
-    public Long getId() {
+    // Getters and Setters
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public Long getClientId() {
+    public UUID getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
 
-    public Long getVehicleId() {
+    public UUID getVehicleId() {
         return vehicleId;
     }
 
-    public void setVehicleId(Long vehicleId) {
+    public void setVehicleId(UUID vehicleId) {
         this.vehicleId = vehicleId;
     }
 
-    public Long getShopId() {
+    public UUID getShopId() {
         return shopId;
     }
 
-    public void setShopId(Long shopId) {
+    public void setShopId(UUID shopId) {
         this.shopId = shopId;
     }
 
-    public Long getMechanicId() {
+    public UUID getMechanicId() {
         return mechanicId;
     }
 
-    public void setMechanicId(Long mechanicId) {
+    public void setMechanicId(UUID mechanicId) {
         this.mechanicId = mechanicId;
     }
 
@@ -100,18 +142,15 @@ public class ServiceRequest {
         this.totalPriceFinal = totalPriceFinal;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    private String clientName;
-    private String vehicleInfo;
-    private String serviceDescription;
-
+    // Helper fields getters/setters
     public String getClientName() {
         return clientName;
     }
@@ -140,9 +179,16 @@ public class ServiceRequest {
     public String toString() {
         return "ServiceRequest{" +
                 "id=" + id +
+                ", clientId=" + clientId +
+                ", vehicleId=" + vehicleId +
+                ", shopId=" + shopId +
+                ", mechanicId=" + mechanicId +
+                ", status='" + status + '\'' +
+                ", totalPriceEstimated=" + totalPriceEstimated +
+                ", totalPriceFinal=" + totalPriceFinal +
+                ", createdAt=" + createdAt +
                 ", clientName='" + clientName + '\'' +
                 ", vehicleInfo='" + vehicleInfo + '\'' +
-                ", status='" + status + '\'' +
                 '}';
     }
 }
