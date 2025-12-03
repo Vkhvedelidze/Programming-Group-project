@@ -41,6 +41,9 @@ public class ServiceRequest {
 
     @JsonProperty("created_at")
     private OffsetDateTime createdAt;
+    
+    @JsonProperty("description")
+    private String description;
 
     // Additional helper fields (not in database, for display purposes)
     @JsonProperty("full_name")
@@ -56,7 +59,7 @@ public class ServiceRequest {
 
     // Constructor for creating new service requests (without ID and created_at)
     public ServiceRequest(UUID clientId, UUID vehicleId, UUID shopId, UUID mechanicId, String status,
-            BigDecimal totalPriceEstimated, BigDecimal totalPriceFinal) {
+                          BigDecimal totalPriceEstimated, BigDecimal totalPriceFinal, String description) {
         this.clientId = clientId;
         this.vehicleId = vehicleId;
         this.shopId = shopId;
@@ -64,12 +67,13 @@ public class ServiceRequest {
         this.status = status;
         this.totalPriceEstimated = totalPriceEstimated;
         this.totalPriceFinal = totalPriceFinal;
+        this.description = description;
     }
 
     // Full constructor
     public ServiceRequest(UUID id, UUID clientId, UUID vehicleId, UUID shopId, UUID mechanicId,
-            String status, BigDecimal totalPriceEstimated, BigDecimal totalPriceFinal,
-            OffsetDateTime createdAt) {
+                          String status, BigDecimal totalPriceEstimated, BigDecimal totalPriceFinal,
+                          OffsetDateTime createdAt, String description) {
         this.id = id;
         this.clientId = clientId;
         this.vehicleId = vehicleId;
@@ -79,6 +83,7 @@ public class ServiceRequest {
         this.totalPriceEstimated = totalPriceEstimated;
         this.totalPriceFinal = totalPriceFinal;
         this.createdAt = createdAt;
+        this.description = description;
     }
 
     // Getters and Setters
@@ -154,6 +159,14 @@ public class ServiceRequest {
         this.createdAt = createdAt;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     // Helper fields getters/setters
     public String getClientName() {
         return clientName;
@@ -191,6 +204,7 @@ public class ServiceRequest {
                 ", totalPriceEstimated=" + totalPriceEstimated +
                 ", totalPriceFinal=" + totalPriceFinal +
                 ", createdAt=" + createdAt +
+                ", description='" + description + '\'' +
                 ", clientName='" + clientName + '\'' +
                 ", vehicleInfo='" + vehicleInfo + '\'' +
                 '}';
