@@ -294,6 +294,14 @@ public class ClientController {
             permissionDescription = "Unknown permissions.";
         }
 
+        // Calculate total price from selected services
+        BigDecimal totalEstimated = BigDecimal.ZERO;
+        for (Map.Entry<CheckBox, BigDecimal> entry : servicePrices.entrySet()) {
+            if (entry.getKey().isSelected()) {
+                totalEstimated = totalEstimated.add(entry.getValue());
+            }
+        }
+
         // Get the selected vehicle and shop IDs
         int vehicleIndex = vehicleComboBox.getSelectionModel().getSelectedIndex();
         int shopIndex = shopComboBox.getSelectionModel().getSelectedIndex();
@@ -315,7 +323,7 @@ public class ClientController {
             request.setVehicleId(vehicleId);
             request.setShopId(shopId);
             request.setStatus("Pending");
-            request.setTotalPriceEstimated(budget); // Use budget as estimated price if available
+            request.setTotalPriceEstimated(totalEstimated);  // Use calculated total!
             request.setServiceDescription(String.join(", ", services));
             request.setNotes(notes);
 
