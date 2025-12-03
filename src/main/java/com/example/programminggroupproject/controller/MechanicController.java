@@ -97,7 +97,7 @@ public class MechanicController {
     private void loadServiceRequests() {
         try {
             // Get all service requests from Supabase
-            List<ServiceRequest> requests = serviceRequestService.getAll();
+            List<ServiceRequest> requests = serviceRequestService.getByShopId(Session.getCurrentUser().getShopId());
 
             // Populate display fields
             for (ServiceRequest request : requests) {
