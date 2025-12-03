@@ -22,6 +22,9 @@ import java.io.IOException;
 import com.example.programminggroupproject.service.PaymentService;
 import com.example.programminggroupproject.model.Payment;
 import java.math.BigDecimal;
+import java.net.URL;
+import javafx.scene.control.Alert;
+import java.util.List;
 
 public class MechanicController {
 
@@ -208,25 +211,39 @@ public class MechanicController {
     @FXML
     private void handleBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/programminggroupproject/dashboard.fxml"));
-            Scene scene = new Scene(loader.load(), 800, 600);
-    
-            // Load CSS if available
-            try {
-                String css = getClass().getResource("/com/example/programminggroupproject/styles.css").toExternalForm();
-                scene.getStylesheets().add(css);
-            } catch (Exception e) {
+            URL fxmlUrl = getClass().getResource("/com/example/programminggroupproject/dashboard.fxml");
+            if (fxmlUrl == null) {
+                showError("Could not find dashboard.fxml");
+                return;
             }
-    
+            
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Scene scene = new Scene(loader.load(), 800, 600);
+
+            // Load CSS if available
+            URL cssUrl = getClass().getResource("/com/example/programminggroupproject/styles.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+
             // Set the current user in dashboard controller
             DashboardController controller = loader.getController();
             controller.setUser(Session.getCurrentUser());
-    
+
             Stage stage = (Stage) requestsTable.getScene().getWindow();
             stage.setScene(scene);
             stage.setTitle("Dashboard - Car Servicinator 3000");
         } catch (IOException e) {
+            // Use a logging framework in production
             e.printStackTrace();
+            showError("Failed to load dashboard: " + e.getMessage());
         }
     }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+}
