@@ -18,10 +18,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.io.IOException;
 import com.example.programminggroupproject.service.PaymentService;
 import com.example.programminggroupproject.model.Payment;
 import java.math.BigDecimal;
+
 
 public class MechanicController {
 
