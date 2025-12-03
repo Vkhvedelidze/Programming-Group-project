@@ -40,7 +40,7 @@ public class PaymentController {
         colDescription.setCellValueFactory(cellData -> {
             Payment payment = cellData.getValue();
             return serviceRequestService.get(payment.getServiceRequestId())
-                    .map(sr -> new SimpleStringProperty(sr.getDescription() != null ? sr.getDescription() : "N/A"))
+                    .map(sr -> new SimpleStringProperty(sr.getServiceDescription() != null ? sr.getServiceDescription() : "N/A"))
                     .orElse(new SimpleStringProperty("N/A"));
         });
 

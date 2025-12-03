@@ -116,6 +116,7 @@ public class ClientController {
 
             if (userVehicles.isEmpty()) {
                 vehicleComboBox.setPromptText("No vehicles registered");
+                System.out.println("No vehicles registered");
             }
 
             // Load available mechanic shops

@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.io.IOException;
 import com.example.programminggroupproject.service.PaymentService;
 import com.example.programminggroupproject.model.Payment;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import javafx.scene.control.Alert;
 import java.util.List;
+
 
 public class MechanicController {
 
@@ -100,7 +102,7 @@ public class MechanicController {
     private void loadServiceRequests() {
         try {
             // Get all service requests from Supabase
-            List<ServiceRequest> requests = serviceRequestService.getAll();
+            List<ServiceRequest> requests = serviceRequestService.getByShopId(Session.getCurrentUser().getShopId());
 
             // Populate display fields
             for (ServiceRequest request : requests) {
