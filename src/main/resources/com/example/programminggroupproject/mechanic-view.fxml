@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -21,10 +22,42 @@
         </font>
     </Label>
 
-    <HBox spacing="10.0" alignment="CENTER_LEFT">
-        <Label text="Search:" />
-        <TextField fx:id="searchField" promptText="Filter by Client or Vehicle..." prefWidth="300.0" />
-    </HBox>
+    <!-- Enhanced Filter Section -->
+    <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2);">
+        <Label text="Filter Service Requests" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+        
+        <HBox spacing="15.0" alignment="CENTER_LEFT">
+            <!-- Status Filter -->
+            <VBox spacing="5">
+                <Label text="Status:" style="-fx-font-size: 11px;"/>
+                <ComboBox fx:id="statusFilterComboBox" prefWidth="150" promptText="All Statuses"/>
+            </VBox>
+            
+            <!-- Client Filter -->
+            <VBox spacing="5">
+                <Label text="Client:" style="-fx-font-size: 11px;"/>
+                <ComboBox fx:id="clientFilterComboBox" prefWidth="200" promptText="All Clients"/>
+            </VBox>
+            
+            <!-- Search Field -->
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Search:" style="-fx-font-size: 11px;"/>
+                <TextField fx:id="searchField" promptText="Search vehicle or services..." prefWidth="250.0"/>
+            </VBox>
+            
+            <!-- Filter Buttons -->
+            <VBox spacing="5" alignment="BOTTOM_CENTER">
+                <Label text=" " style="-fx-font-size: 11px;"/>
+                <HBox spacing="10">
+                    <Button text="Apply Filter" onAction="#handleApplyFilter" styleClass="button-primary"/>
+                    <Button text="Clear" onAction="#handleClearFilter" styleClass="button-info"/>
+                </HBox>
+            </VBox>
+        </HBox>
+        
+        <!-- Results Count -->
+        <Label fx:id="filterResultsLabel" text="" style="-fx-text-fill: #666; -fx-font-size: 12px;"/>
+    </VBox>
 
     <TableView fx:id="requestsTable" VBox.vgrow="ALWAYS">
         <columns>

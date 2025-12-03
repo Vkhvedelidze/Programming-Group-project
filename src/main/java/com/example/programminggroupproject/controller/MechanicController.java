@@ -8,22 +8,18 @@ import com.example.programminggroupproject.service.VehicleService;
 import com.example.programminggroupproject.session.Session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.util.List;
 import java.io.IOException;
+import java.util.stream.Collectors;
 import com.example.programminggroupproject.service.PaymentService;
 import com.example.programminggroupproject.model.Payment;
-import java.math.BigDecimal;
-
 
 public class MechanicController {
 
@@ -48,7 +44,19 @@ public class MechanicController {
     @FXML
     private TableColumn<ServiceRequest, String> colDate;
 
+    // Filter controls
+    @FXML
+    private ComboBox<String> statusFilterComboBox;
+
+    @FXML
+    private ComboBox<String> clientFilterComboBox;
+
+    @FXML
+    private Label filterResultsLabel;
+
     private ObservableList<ServiceRequest> masterData = FXCollections.observableArrayList();
+    private List<ServiceRequest> allRequests; // Store all requests for filtering
+    
     private final ServiceRequestService serviceRequestService = ServiceRequestService.getInstance();
     private final PaymentService paymentService = PaymentService.getInstance();
     private final VehicleService vehicleService = VehicleService.getInstance();
@@ -63,52 +71,61 @@ public class MechanicController {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
 
+        // Initialize filter controls
+        initializeFilters();
+
         // Load data from Supabase
         loadServiceRequests();
-
-        // Wrap in FilteredList
-        FilteredList<ServiceRequest> filteredData = new FilteredList<>(masterData, p -> true);
-
-        // Bind search field
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(request -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-
-                if (request.getClientName() != null
-                        && request.getClientName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (request.getVehicleInfo() != null
-                        && request.getVehicleInfo().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (request.getServiceDescription() != null
-                        && request.getServiceDescription().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                return false;
-            });
-        });
-
-        requestsTable.setItems(filteredData);
     }
 
+    /**
+     * Initialize filter controls with options
+     */
+    private void initializeFilters() {
+        // Status filter options
+        statusFilterComboBox.getItems().addAll(
+            "All Statuses",
+            "Pending",
+            "In Progress",
+            "Completed",
+            "Rejected"
+        );
+        statusFilterComboBox.setValue("All Statuses");
+
+        // Client filter will be populated after loading requests
+        clientFilterComboBox.getItems().add("All Clients");
+        clientFilterComboBox.setValue("All Clients");
+    }
+
+    /**
+     * Load all service requests for the mechanic's shop
+     */
     private void loadServiceRequests() {
         try {
-            // Get all service requests from Supabase
-            List<ServiceRequest> requests = serviceRequestService.getByShopId(Session.getCurrentUser().getShopId());
+            if (Session.getCurrentUser() == null || Session.getCurrentUser().getShopId() == null) {
+                System.err.println("No user or shop ID found");
+                return;
+            }
 
-            // Populate display fields
+            // Get all service requests from Supabase for this shop
+            List<ServiceRequest> requests = serviceRequestService.getByShopId(
+                Session.getCurrentUser().getShopId()
+            );
+
+            // Populate display fields and collect unique clients
+            List<String> uniqueClients = new java.util.ArrayList<>();
+            
             for (ServiceRequest request : requests) {
                 // Try to fetch client name
                 if (request.getClientId() != null) {
                     try {
                         var userOptional = userService.get(request.getClientId());
                         if (userOptional.isPresent()) {
-                            request.setClientName(userOptional.get().getFullName());
+                            String clientName = userOptional.get().getFullName();
+                            request.setClientName(clientName);
+                            if (!uniqueClients.contains(clientName)) {
+                                uniqueClients.add(clientName);
+                            }
                         } else {
                             request.setClientName("Unknown Client");
                         }
@@ -143,12 +160,128 @@ public class MechanicController {
                 }
             }
 
-            masterData.clear();
-            masterData.addAll(requests);
+            // Store all requests for filtering
+            allRequests = requests;
+
+            // Update client filter dropdown
+            updateClientFilter(uniqueClients);
+
+            // Display all requests
+            displayRequests(requests);
+            
+            // Update results count
+            updateFilterResultsLabel(requests.size(), requests.size());
 
         } catch (Exception e) {
             System.err.println("Error loading service requests: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Update client filter dropdown with unique clients
+     */
+    private void updateClientFilter(List<String> clients) {
+        clientFilterComboBox.getItems().clear();
+        clientFilterComboBox.getItems().add("All Clients");
+        clientFilterComboBox.getItems().addAll(clients.stream().sorted().collect(Collectors.toList()));
+        clientFilterComboBox.setValue("All Clients");
+    }
+
+    /**
+     * Display service requests in the table
+     */
+    private void displayRequests(List<ServiceRequest> requests) {
+        masterData.clear();
+        masterData.addAll(requests);
+        requestsTable.setItems(masterData);
+    }
+
+    /**
+     * Update the filter results label
+     */
+    private void updateFilterResultsLabel(int filtered, int total) {
+        if (filtered == total) {
+            filterResultsLabel.setText(total + " service request(s) found");
+        } else {
+            filterResultsLabel.setText(filtered + " of " + total + " request(s) match filter");
+        }
+    }
+
+    /**
+     * Apply filters to the service requests
+     */
+    @FXML
+    private void handleApplyFilter() {
+        if (allRequests == null || allRequests.isEmpty()) {
+            filterResultsLabel.setText("No requests to filter");
+            return;
+        }
+
+        try {
+            String statusFilter = statusFilterComboBox.getValue();
+            String clientFilter = clientFilterComboBox.getValue();
+            String searchText = searchField.getText().trim().toLowerCase();
+
+            // Apply filters using Stream API
+            List<ServiceRequest> filtered = allRequests.stream()
+                .filter(request -> {
+                    // Filter by status
+                    if (statusFilter != null && !statusFilter.equals("All Statuses")) {
+                        if (!statusFilter.equals(request.getStatus())) {
+                            return false;
+                        }
+                    }
+
+                    // Filter by client
+                    if (clientFilter != null && !clientFilter.equals("All Clients")) {
+                        if (request.getClientName() == null || 
+                            !request.getClientName().equals(clientFilter)) {
+                            return false;
+                        }
+                    }
+
+                    // Filter by search text (searches vehicle and services)
+                    if (!searchText.isEmpty()) {
+                        boolean matchesVehicle = request.getVehicleInfo() != null && 
+                            request.getVehicleInfo().toLowerCase().contains(searchText);
+                        boolean matchesService = request.getServiceDescription() != null && 
+                            request.getServiceDescription().toLowerCase().contains(searchText);
+                        boolean matchesClient = request.getClientName() != null &&
+                            request.getClientName().toLowerCase().contains(searchText);
+                        
+                        if (!matchesVehicle && !matchesService && !matchesClient) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })
+                .collect(Collectors.toList());
+
+            displayRequests(filtered);
+            updateFilterResultsLabel(filtered.size(), allRequests.size());
+            
+        } catch (Exception e) {
+            filterResultsLabel.setText("Error applying filter: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Clear all filters and show all requests
+     */
+    @FXML
+    private void handleClearFilter() {
+        // Reset filter controls
+        statusFilterComboBox.setValue("All Statuses");
+        clientFilterComboBox.setValue("All Clients");
+        searchField.clear();
+
+        // Display all requests
+        if (allRequests != null) {
+            displayRequests(allRequests);
+            updateFilterResultsLabel(allRequests.size(), allRequests.size());
         }
     }
 
